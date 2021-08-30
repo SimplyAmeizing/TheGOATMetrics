@@ -1,0 +1,31 @@
+{% extends "index.html" %}
+{% block title %}Search Page{% endblock %}
+
+
+{% block content %}
+    </script>   
+    {% for p in dict %}
+        {% with x = dict[p] %}
+         
+        <h3>
+            {% if x[4] != None %}
+                {% with full_id = p + '_' + x[4]%}
+            <a href = "{{ url_for('playerhome', id=full_id)}}"> {{x[0]}}</a>
+                {% endwith %}
+        </h3>
+            {% if x[1] != "None" and x[2] != "None" %}
+                <p>{{x[1]}} , {{x[2]}}</p>
+            {%elif x[1] =="None" and x[2] != "None" %} 
+                <p>{{x[2]}}</p>
+            {% elif x[1] !="None" and x[2] == "None" %}
+                <p>{{x[1]}}</p>
+            {% endif %}
+                {% if x[3] != "None" %}
+                    <p>Current Status: {{x[3]}}</p>
+                {% endif %}
+            </div>
+           
+            {% endif %}
+        {% endwith %}
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,394 @@
+{% extends "index.html" %}
+{% block title %}Reg Season Advanced Statistics | {{name}}{% endblock %}
+
+
+{% block content %}
+{% include "playerhome.html"%}
+    <div class="full-width-background fwb-grey">
+        <div class = "home-links" id = "all-home-links">
+            <div class = "home" id='home-profile'>
+                <h3>
+                <a href = "{{ url_for('profile', name=name)}}">
+                    Profile
+                </a>
+            </h3>
+            </div>
+
+        <br>
+
+        <div class = "home" id='home-career'>
+        <h3>
+            <a href ="{{ url_for('career_earnings', id=id)}}">
+            Earnings</a>
+        </h3>
+        </div>
+
+        <br>
+
+        <div class = 'home' id = "home-adva">
+            <h3>
+                <a class = "current" href ="{{ url_for('advanced_statistics_regular', id=id)}}">
+                Advanced Stats
+                </a>
+            </h3>
+        </div>
+
+        <br>
+
+        <div class='home' id = "home-reg">
+            <h3>
+                <a href ="{{ url_for('regular_stats', id=id)}}">
+                    Reg. Season Stats
+                </a>
+            </h3>
+        </div>
+
+        <br>
+
+        <div class = 'home'id = "home-last">
+        <h3>
+            <a href ="{{ url_for('playoff_stats', id=id)}}">
+                Playoff Stats
+            </a>
+        </h3>
+        </div>
+        
+        </div>
+    </div>
+
+    {% if not pdf_reg.empty %}
+        <link rel = 'stylesheet' href= {{url_for('static', filename='css/style.css')}}>
+        <div class="all-data-reg-advanced">
+        <table class="advanced-table-reg">
+            <caption>Advanced Analytics</caption>
+                <thead>
+                    <tr>
+                        <th>Season</th>
+                        <th>Team</th>
+                        <th>GP</th>
+                        <th>PER</th>
+                        <th>TS%</th>
+                        <th>ORB%</th>
+                        <th>DRB%</th>
+                        <th>TRB%</th>
+                        <th>AST%</th>
+                        <th>STL%</th>
+                        <th>BLK%</th>
+                        <th>TOV%</th>
+                        <th>USG%</th>
+                        <th>OWS</th>
+                        <th>DWS</th>
+                        <th>WS</th>
+                        <th>OBPM</th>
+                        <th>DBPM</th>
+                        <th>BPM</th>
+                        <th>VORP</th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for r in range(0, (dict['PER'] | length) -1) %}
+                    <tr>
+                        <td>{{dict['Season'][r]}}</td>
+                        <td>{{dict['Team'][r]}}</td>
+                        <td>{{dict['GP'][r]}}</td>
+                        {% if dict['PER']%}
+                            <td>{{dict['PER'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['TS']%}
+                            <td>{{dict['TS'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['ORB'] and dict['ORB'][r] != ''%}
+                            <td>{{dict['ORB'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['DRB'] and dict['DRB'][r] != ''%}
+                            <td>{{dict['DRB'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['TRB'] and dict['TRB'][r] != '' %}
+                            <td>{{dict['TRB'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['AST'] and dict['AST'][r] != ''%}
+                            <td>{{dict['AST'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['STL'] and dict['STL'][r] != ''%}
+                            <td>{{dict['STL'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['BLK'] and dict['BLK'][r] != ''%}
+                            <td>{{dict['BLK'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['TOV'] and dict['TOV'][r] != ''%}
+                            <td>{{dict['TOV'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['USG'] and dict['USG'][r] != ''%}
+                            <td>{{dict['USG'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['OWS'] and dict['OWS'][r] != ''%}
+                            <td>{{dict['OWS'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['DWS'] and dict['DWS'][r] != ''%}
+                            <td>{{dict['DWS'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['WS'] and dict['WS'][r] != ''%}
+                            <td>{{dict['WS'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['OBxPM'] and dict['OBxPM'][r] != ''%}
+                            <td>{{dict['OBxPM'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['DBxPM'] and dict['DBxPM'][r] != ''%}
+                            <td>{{dict['DBxPM'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['BxPM'] and dict['BxPM'][r] != ''%}
+                            <td>{{dict['BxPM'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['VORP'] and dict['VORP'][r] != ''%}
+                            <td>{{dict['VORP'][r]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+                <tfoot>   
+                    <tr>
+                        <td>Career</td>
+                        <td></td>
+                        <td>{{dict['GP'][-1]}}</td>
+
+                        {% if dict['PER']%}
+                            <td>{{dict['PER'][-1]}}</td>
+                        {% else %}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['TS']%}
+                            <td>{{dict['TS'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['ORB'] and dict['ORB'][-1] != ''%}
+                            <td>{{dict['ORB'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['DRB'] and dict['DRB'][-1] != ''%}
+                            <td>{{dict['DRB'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['TRB'] and dict['TRB'][-1] != ''%}
+                            <td>{{dict['TRB'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['AST'] and dict['AST'][-1] != ''%}
+                            <td>{{dict['AST'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['STL'] and dict['STL'][-1] != ''%}
+                            <td>{{dict['STL'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['BLK'] and dict['BLK'][-1] != ''%}
+                            <td>{{dict['BLK'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['TOV'] and dict['TOV'][-1] != ''%}
+                            <td>{{dict['TOV'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['USG'] and dict['USG'][-1] != ''%}
+                            <td>{{dict['USG'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['OWS'] and dict['OWS'][-1] != ''%}
+                            <td>{{dict['OWS'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['DWS'] and dict['DWS'][-1] != ''%}
+                            <td>{{dict['DWS'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['WS'] and dict['WS'][-1] != ''%}
+                            <td>{{dict['WS'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['OBxPM'] and dict['OBxPM'][-1] != ''%}
+                            <td>{{dict['OBxPM'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['DBxPM'] and dict['DBxPM'][-1] != ''%}
+                            <td>{{dict['DBxPM'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['BxPM'] and dict['BxPM'][-1] != ''%}
+                            <td>{{dict['BxPM'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+
+                        {% if dict['VORP'] and dict['VORP'][-1] != ''%}
+                            <td>{{dict['VORP'][-1]}} </td>
+                        {% else%}
+                            <td>None</td>
+                        {% endif %}
+        
+                    </tr>
+                    
+                </tfoot>
+        </table>
+        
+        {% if pdf1[1]['GP'][0] > 100 %}
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.min.js"> 
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <div class = "radar-and-note">
+            <div class='radar-regular'>
+                <canvas id="myChart" width = '401' height= '400'></canvas>
+            </div>
+            <script>
+                var ctx = document.getElementById('myChart').getContext('2d');
+            
+                Chart.defaults.global.defaultFontColor = 'white';
+                var myChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Scoring', 'Playmaking', 'Efficiency', '3 Pt Shooting','Rebounding'],
+                        datasets: [{
+                            label: 'Statistical Category Rankings from 0-10 (excluding Defense)',
+                            data: {{listStats}},
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        scale: {
+                            gridLines: {
+                                color: ['#rgb(211,211,211)', '#rgb(211,211,211)', '#rgb(211,211,211)', '#rgb(211,211,211)', '#rgb(211,211,211)']
+                            },
+                            ticks:{
+                                backdropColor:'rgb(32,32,32)',
+                                beginAtZero: true,
+                                max:10
+                            }
+                      
+                        }
+                        
+                    }
+                });
+                </script>
+
+                <div class = 'box-reg'>
+                    <p><u>NBA League Averages (1974-2021):</u></p>
+                    <p>Points ---- 10.1 PPG</p>
+                    <p>Assists ---- 2.3 APG</p>
+                    <p>Rebounds ---- 4.2 RPG</p>
+                    <p>FG% ---- 45.7%</p>
+                    <p>3P% ---- 32.9%</p>
+                    <p>FT% ---- 73.8%</p>
+                    <p><b>Disclaimer:</b> Defensive stats were not included within the chart because there are very little metrics that
+                    effectively measure a player's individual defensive impact (blocks and steals are good examples of stats that
+                    seems like a good metric, but are difficult to use in statistical analysis) </p>
+                        
+                    </div>
+        {% else %}
+            
+            <div class = 'box1-reg'>
+                <p><u>NBA League Averages (1974-2021):</u></p>
+                <p>Points ---- 10.1 PPG</p>
+                <p>Assists ---- 2.3 APG</p>
+                <p>Rebounds ---- 4.2 RPG</p>
+                <p>FG% ---- 45.7%</p>
+                <p>3P% ---- 32.9%</p>
+                <p>FT% ---- 73.8%</p>
+                <p><b>Disclaimer:</b> Defensive stats were not included within the chart because there are very little metrics that
+                effectively measure a player's individual defensive impact (blocks and steals are good examples of stats that
+                seems like a good metric, but are difficult to use in statistical analysis) </p>
+                        
+                    </div>
+                    
+                
+        {% endif%}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <h2><b>There were no NBA Advanced data/statistics on this player...</b></h2>
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,211 @@
+{% extends "index.html" %}
+{% block title %} Profile | {{name}} {% endblock %}
+
+<head>
+    <link rel='stylesheet' href = {{url_for('static', filename = 'css/style.css')}}>
+</head>
+
+{% block content %}
+    {% include 'playerhome.html'%}
+    <div class="full-width-background fwb-grey">
+        <div class = "home-links" id = "all-home-links">
+            <div class = "home" id='home-profile'>
+                <h3>
+                <a class = 'current' href = "{{ url_for('profile', name=name)}}">
+                    Profile
+                </a>
+            </h3>
+            </div>
+
+        <br>
+
+        <div class = "home" id='home-career'>
+        <h3>
+            <a href ="{{ url_for('career_earnings', id=id)}}">
+            Earnings</a>
+        </h3>
+        </div>
+
+        <br>
+
+        <div class = 'home' id = "home-adva">
+            <h3>
+                <a href ="{{ url_for('advanced_statistics_regular', id=id)}}">
+                Advanced Stats
+                </a>
+            </h3>
+        </div>
+
+        <br>
+
+        <div class='home' id = "home-reg">
+            <h3>
+                <a href ="{{ url_for('regular_stats', id=id)}}">
+                    Reg. Season Stats
+                </a>
+            </h3>
+        </div>
+
+        <br>
+
+        <div class = 'home'id = "home-last">
+        <h3>
+            <a href ="{{ url_for('playoff_stats', id=id)}}">
+                Playoff Stats
+            </a>
+        </h3>
+        </div>
+        
+        </div>
+    </div>
+    <div class = 'profile-all'>
+        <div class = 'profile-awards'>
+            <div class = "inner-p-awards">
+        <h1><u>NBA Awards</u></h1>
+        {% if(aw.HOF != None) %}
+            <h3>{{aw.HOF}}</h3>
+        {% endif %}
+    
+        {% if(aw.Champ != None) %}
+            <h3>{{aw.Champ[:-10]}} NBA Champion {{list_yr[0]}}</h3>
+        {% endif %}
+    
+        {% if(aw.FMVP != None) %}
+            <h3>{{aw.FMVP}} {{list_yr[1]}}</h3>
+        {% endif %}
+    
+        {% if(aw.MVP != None) %}
+            <h3>{{aw.MVP}} {{list_yr[2]}}</h3>
+        {% endif %}
+    
+        {% if(aw.DPOY != None) %}
+            <h3>{{aw.DPOY[:-9]}} Defensive Player of the Year {{list_yr[3]}}</h3>
+        {% endif %}
+    
+        {% if(aw.AS != None) %}
+            <h3>{{aw.AS}}</h3>
+        {% endif %}
+    
+        {% if aw.MIP != None %}
+            <h3>{{aw.MIP}} Player</h3>
+        {% endif %}
+    
+        {% if aw.SMOY != None %}
+            <h3>{{aw.SMOY}} of the Year {{list_yr[4]}}</h3>
+        {% endif %}
+            
+        {% if(aw.ASMVP != None) %}
+            <h3>{{aw.ASMVP[:-7]}} All Star MVP</h3>
+        {% endif %}
+    
+        {% if(aw.ROY != None) %}
+            <h3>{{aw.ROY[:-4]}} Rookie of the Year</h3>
+        {% endif %}
+    
+        {% if(aw.ScChamp != None) %}
+            <h3>{{aw.ScChamp}}</h3>
+        {% endif %}
+    
+        {% if(aw.AsChamp != None) %}
+            <h3>{{aw.AsChamp[:-10]}} Assists Leader</h3>
+        {% endif %}
+    
+        {% if(aw.RbChamp != None) %}
+            <h3>{{aw.RbChamp[:-10]}} Rebounding Leader</h3>
+        {% endif %}
+    
+        {% if(aw.BlkChamp != None) %}
+            <h3>{{aw.BlkChamp[:-10]}} Blocks Leader</h3>
+        {% endif %}
+    
+        {% if(aw.StChamp != None) %}
+            <h3>{{aw.StChamp[:-10]}} Steals Leader</h3>
+        {% endif %}
+    </div>
+            <div class='filler'>
+                <h3></h3>
+            </div>
+        </div>
+
+        <div class = 'personal-info'>
+            <div class = "inner-p-info">
+            <h1><u>Personal Information</u></h1>
+            <h3> Name: {{name}}</h3>
+            {% for p in pers %}
+                {% if p == pers[0]%}
+                    {% with head, sep, tail = p.partition('▪')%}
+                    <h3>Full Name: {{head}}</h3>
+                    {% endwith %}
+                {% elif p == pers[1]%}
+                    {% with p1 = p.replace("(","") %}
+                    {% with p2 = p1.replace(")","") %}
+                    <h3>Nickname(s): {{p2}}</h3>
+                    {% endwith %}
+                    {% endwith %}    
+                {% elif p == pers[2] %}
+                    {% with p = p.replace("▪", '---') %}
+                    <h3>{{p}}</h3>
+                    {% endwith %}
+                {% elif p == pers[3] %}
+                    <h3>Height/Weight: {{p}}</h3>
+                {% elif p == pers[4] %}
+                    <h3>{{p[:-3]}}</h3>
+                {% elif p.find("College") != -1 %}
+                    <h3>{{p}}</h3> 
+                {% elif p.find("High School") != -1 %}
+                    <h3>{{p}}</h3>   
+                {% elif p.find("Draft") != -1 %}
+                    <h3>{{p}}</h3>            
+                {% endif %}
+            {% endfor %}
+        </div>
+            <div class='filler1'>
+                <h3></h3>
+            </div>
+        </div>
+  
+    <div class = 'profile-honors'>
+        <div class = 'honors-allnba'>
+    <h1><u>All NBA Honors</u></h1>
+    {% if(AllNBA[0] != 0)%}
+        <h3>{{AllNBA[0]}}x All-NBA First Team</h3>
+    {% endif %}
+
+    {% if AllNBA[1] != 0 %}
+        <h3>{{AllNBA[1]}}x All-NBA Second Team</h3>
+    {% endif %}
+
+    {% if AllNBA[2] != 0 %}
+        <h3>{{AllNBA[2]}}x All-NBA Third Team</h3>
+    {% endif %}
+
+    {% if AllNBA[3] != 0 %}
+        <h3>{{AllNBA[3]}}x All-Defensive First Team</h3>
+    {% endif %}
+
+    {% if AllNBA[4] != 0 %}
+        <h3>{{AllNBA[4]}}x All-Defensive Second Team</h3>
+    {% endif %}
+
+    {% if AllNBA[5] != None %}
+        {% if AllNBA[6] != 0 %}
+            <h3>{{AllNBA[5]}} First Team</h3>
+        {% elif AllNBA[7] != 0 %}
+            <h3>{{AllNBA[5]}} Second Team</h3>
+        {% endif %}
+    {% endif %}
+        </div>
+
+        <div class= 'honors-am'>
+        <h1><u>Amateur Honors</u></h1>
+        {% if amateur %}
+            {% for y in amateur %}
+                <h3>{{y}}</h3>
+            {% endfor %}
+        {% endif %}
+        </div>
+        </div>
+    </div>
+    <div class = footer-profile><center><h4>Disclaimer: International/Overseas awards such as Olympic Medals, FIBA Championships, and EuroLeague awards are not included on this list of achievements</h4>
+    </center></div>
+    {% endblock %}

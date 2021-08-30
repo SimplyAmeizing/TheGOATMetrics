@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "chart.js": "^3.5.1",
+    "chartist-plugin-axistitle": "^0.0.7",
+    "jquery": "^3.6.0"
+  }
+}

@@ -1,0 +1,169 @@
+{% extends "index.html" %}
+{% block title %} Career Earnings | {{name}}{% endblock %}
+
+<head>
+    <div class='earnings-title'><h2>{{name}} Career Earnings</h2></div>
+    <link rel="stylesheet" href={{url_for('static', filename="css/style.css")}}>
+
+    <script src = https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js></script>
+    <meta charset="utf-8">
+</head>
+
+{% block content %}
+    {% include "playerhome.html"%}
+    <div class="full-width-background fwb-grey">
+        <div class = "home-links" id = "all-home-links">
+            <div class = "home" id='home-profile'>
+                <h3>
+                <a href = "{{ url_for('profile', name=name)}}">
+                    Profile
+                </a>
+            </h3>
+            </div>
+
+        <br>
+
+        <div class = "home" id='home-career'>
+        <h3>
+            <a class = 'current' href ="{{ url_for('career_earnings', id=id)}}">
+            Earnings</a>
+        </h3>
+        </div>
+
+        <br>
+
+        <div class = 'home' id = "home-adva">
+            <h3>
+                <a href ="{{ url_for('advanced_statistics_regular', id=id)}}">
+                Advanced Stats
+                </a>
+            </h3>
+        </div>
+
+        <br>
+
+        <div class='home' id = "home-reg">
+            <h3>
+                <a href ="{{ url_for('regular_stats', id=id)}}">
+                    Reg. Season Stats
+                </a>
+            </h3>
+        </div>
+
+        <br>
+
+        <div class = 'home'id = "home-last">
+        <h3>
+            <a href ="{{ url_for('playoff_stats', id=id)}}">
+                Playoff Stats
+            </a>
+        </h3>
+        </div>
+        
+        </div>
+    </div>
+
+    {% if dict['year'] or dict['curyear'] %}
+
+        <body>
+       
+        <div class=contract-tables>
+        <div class=contract-and-title>
+            <div class = 'title-contract-name'><h2><center>Career Earnings Chart</center></h2></div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.min.js"> </script>
+            <canvas id = 'myChartearnings' width = '800' height = '600'></canvas>
+            <script>
+                const ctx = document.getElementById('myChartearnings').getContext('2d');
+                const myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: {{labels1}},
+                        datasets: [{
+                            label: 'Career Earnings (in Millions)',
+                            data: {{values}},
+                            backgroundColor: 'rgb(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+                
+        </script>
+        </div>
+    
+        <link rel = 'stylesheet' href= {{url_for('static', filename='css/style.css')}}>
+            <div class=contract-tables-inner>
+            {%if dict['curyear']%}
+            <table class="curr-contract-table">
+                <caption>Current Contract</caption>
+                    <thead>
+                        <tr>
+                            <th>Season</th>
+                            <th>Team</th>
+                            <th>Salary</th>
+                        </tr>
+                    </thead>
+
+                        {% for x in range(0, dict['curyear'] | length) %}
+                        <tbody>
+                        <tr>
+                            <td width='100px'>{{dict['curyear'][x]}}</td>
+                            <td width = '170px'>{{dict['curteam'][0]}}</td>
+                            <td width = '120px'>{{dict['cursalary'][x]}}</td>
+                        </tr>
+                    </tbody>
+                    {% endfor %}
+            </table>
+            
+            {% endif %}
+            
+            {% if dict['year'] %}
+            <table class="earnings-table">
+                <caption>Past/Total Earnings</caption>
+                    <thead>
+                        <tr>
+                            <th>Season</th>
+                            <th>Team</th>
+                            <th>Salary</th>
+                        </tr>
+                    </thead>
+
+                        {% for x in range(0, dict['year'] | length) %}
+                        <tbody>
+                        <tr>
+                            {% if x < (dict['year'] | length) - 1 %}
+                                <td width = '100px'>{{dict['year'][x]}}</td>
+                                <td width = '170px'>{{dict['team'][x]}}</td>
+                                <td width = '120px'>{{dict['salary'][x]}}</td>
+                        </tr>
+                    </tbody>
+
+                    <tfoot>
+                        <tr>
+                            {% else %}
+                                <td style='background-color:blue'>{{dict['year'][x]}}</td>
+                                <td style='background-color:blue'></td>
+                                <td style='background-color:blue'>{{dict['salary'][x]}}</td>
+                        </tr>
+                            {% endif %}
+                    </tfoot>
+                    {% endfor %}
+            </table>
+            {% endif %}
+            
+        </div>
+        </div>
+        
+            </body>
+        {% else %}
+            <h2><b>There were no contract details on this player...</b></h2>
+    {% endif %}
+    
+{% endblock %}

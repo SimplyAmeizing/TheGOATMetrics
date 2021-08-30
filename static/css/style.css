@@ -1,0 +1,812 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: rgbb(63, 60, 60);
+  font-size: 18px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.title-and-search{
+    display: flex;
+    margin-bottom: -35px;
+}
+
+.section-heading {
+    margin-left: 65px;
+    color:#ffa600;
+    font-family: 'Impact', sans-serif;
+    font-size: 27.5px;
+  }
+
+.container {
+ 
+}
+
+.wrapper {
+  margin-left: 545px;
+  margin-top: 35px;
+  background-color: rgb(14, 14, 14);
+  border-radius: 5px;
+  box-shadow: 0px 1px 5px 3px rgba(0,0,0,0.15);
+  position: relative;
+  width: 450px;
+}
+
+input {
+  width:100%;
+  background-color: rgb(36, 36, 36);
+  border: none;
+  height: 50px;
+  border-radius: 5px;
+  padding: 0px 40px 0px 10px;
+  font-size: 18px;
+  box-shadow: 0px 1px 4px rgba(0,0,0,0.1);
+  color:white;
+}
+
+input::placeholder{
+    color:rgb(184, 184, 184);
+}
+
+input:focus {
+  outline: none;
+}
+
+
+button {
+  position: absolute;
+  border: none;
+  background: none;
+  top: 0;
+  right: 0;
+  height: 50px;
+  line-height: 50px;
+  padding: 0;
+  width: 50px;
+}
+
+button:focus {
+  outline: none;
+}
+
+button i {
+  width: 100%;
+  color: white;
+  line-height: 50px;
+  font-size: 22px;
+}
+
+.results {
+  padding: 0px;
+}
+
+.results ul {margin: 0; padding: 0;}
+.results ul li {
+  background-color: rgb(32, 32, 32);
+  list-style: none;
+  border-radius: 3px;
+  display: none;
+  padding: 8px 12px;
+  transition: all .5s linear;
+}
+
+.show .results ul{
+    position: absolute;
+    z-index: 100;
+}
+.show .results ul li {
+  display: block;
+}
+
+.show .results {
+  padding: 10px;
+}
+
+.results ul li:hover {
+  background: #6e6e6e;
+}
+
+body{
+    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+}
+
+.earnings-table{
+    border-collapse:collapse;
+    margin-left: 115px;
+    margin-right:auto;
+    font-size:0.9em;
+    width: 400px;
+}
+
+.contract-tables {
+    margin-top: 10%;
+    display:flex;
+    margin-bottom: 5%;
+}
+
+.chartcontract caption{
+    justify-content: center;
+    width:300px;
+    caption-side: top;    
+}
+
+.contract-tables-inner{
+    margin-left: -40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.earnings-table caption{
+    caption-side: top;
+    font-size: medium;
+}
+
+.earnings-table thead tr{
+    background-color: blue;
+    color:white;
+    text-align:center;
+    font-weight:bold;
+}
+
+.earnings-table table, th, td {
+    border: 1px solid rgb(32, 32, 32);
+    line-height: 10px;
+}
+
+.contract-table .earnings-table tbody, tr, td{
+    background-color: rgb(32,32,32);
+    text-align: center;
+}
+
+
+.curr-contract-table{
+    background-color: rgb(32,32,32);
+    border-collapse:collapse;
+    margin-left: 115px;
+    font-size:0.9em;
+    margin-bottom: 40px;
+    height: auto;
+}
+.curr-contract-table caption{
+    caption-side: top;
+    font-size: medium;
+}
+
+.curr-contract-table thead tr{
+    background-color: blue;
+    color:white;
+    text-align:center;
+    font-weight:bold;
+}
+
+.curr-contract-table table, th, td {
+    border: 1px solid black;
+    line-height: 10px;
+}
+
+.curr-contract-table td{
+    text-align: center;
+    padding: 3px;
+}
+
+.contract-tables .contract-and-title{
+    margin-left: 5%;
+}
+
+#myChartearnings{
+    background-color: rgb(32, 32, 32);;
+}
+
+.reg-title{
+    margin-bottom: 40px;
+    margin-left: 260px;
+    margin-right:auto;
+    width: 50%;
+    text-align: center;
+    padding:30px;
+}
+
+.reg-season-table{
+    border-collapse:collapse;
+    margin-left: 115px;
+    margin-right:auto;
+    font-size:0.9em;
+    min-width: 1050px;
+    width:40%;
+    margin-bottom: 5%;
+    margin-top: 1.5%;
+    
+}
+.reg-season-table caption{
+    caption-side: top;
+    font-size: medium;
+}
+
+.reg-season-table thead tr{
+    background-color: blue;
+    color:white;
+    text-align:center;
+    font-weight:bold;
+}
+
+.reg-season-table table, th, td {
+    border: 1px solid black;
+    line-height:40px;
+    width:80px;
+}
+
+.reg-season-table td{
+    text-align: center;
+}
+
+.reg-season-table tfoot td{
+    background-color: blue;
+}
+
+.overview-reg-season {
+    width:50%; 
+    display:flex;
+    margin-left: 335px;
+    margin-right:auto;
+    border-spacing: 10px;
+    margin-top: 10%;
+    
+}
+
+.col1-reg{
+    display:table;
+    float:left;
+    width: 9%;
+}
+
+.col2-reg{
+    display:table;
+    float: left;
+    width: 4%;
+}
+
+.col3-reg{
+    display:table;
+    float: left;
+    width: 8%;
+}
+
+.col4-reg{
+    display:table;
+    float:left;
+    width: 4%;
+}
+
+.col5-reg{
+    display:table;
+    float: left;
+    width: 4%;
+}
+
+.col6-reg{
+    display:table;
+    float: left;
+    width: 8%;
+}
+
+.col7-reg{
+    display:table;
+    float:left;
+    width: 5%;
+}
+
+.col8-reg{
+    display:table;
+    float: left;
+    width: 5%;
+}
+
+.col9-reg{
+    display:table;
+    float: left;
+    width: 5%;
+}
+
+.play-title{
+    margin-bottom: 40px;
+    margin-left: 240px;
+    margin-right:auto;
+    width: 50%;
+    text-align: center;
+    padding:30px;
+}
+
+.playoff-table{
+    border-collapse:collapse;
+    margin-left: 115px;
+    margin-right:auto;
+    font-size:0.9em;
+    min-width: 1050px;
+    width:40%;
+    margin-bottom: 5%;
+    
+}
+.playoff-table caption{
+    caption-side: top;
+    font-size: medium;
+}
+
+.playoff-table thead tr{
+    background-color: blue;
+    color:white;
+    text-align:center;
+    font-weight:bold;
+}
+
+.playoff-table table, th, td {
+    border: 1px solid black;
+    line-height:40px;
+    width:80px;
+}
+
+.playoff-table td{
+    text-align: center;
+}
+
+.playoff-table tfoot td{
+    background-color: blue;
+    
+}
+
+.overview-playoffs {
+    width:50%; 
+    display:flex;
+    margin-left: 335px;
+    margin-right:auto;
+    border-spacing: 10px;
+    table-layout: fixed;
+    margin-top: 10%;
+    margin-bottom:3%;
+}
+
+.col1-play{
+    display:table;
+    float:left;
+    width: 9%;
+}
+
+.col2-play{
+    display:table;
+    float: left;
+    width: 4%;
+}
+
+.col3-play{
+    display:table;
+    float: left;
+    width: 8%;
+}
+
+.col4-play{
+    display:table;
+    float:left;
+    width: 4%;
+}
+
+.col5-play{
+    display:table;
+    float: left;
+    width: 4%;
+}
+
+.col6-play{
+    display:table;
+    float: left;
+    width: 8%;
+}
+
+.col7-play{
+    display:table;
+    float:left;
+    width: 5%;
+}
+
+.col8-play{
+    display:table;
+    float: left;
+    width: 5%;
+}
+
+.col9-play{
+    display:table;
+    float: left;
+    width: 5%;
+}
+
+
+
+
+.advanced-table-reg{
+    border-collapse:collapse;
+    margin-left:50px;
+    margin-top: 22px;
+    font-size:0.9em;
+    margin-bottom: 100px;
+    margin-bottom:auto;
+}
+
+.advanced-table-reg caption{
+    caption-side: top;
+    font-size: medium;
+}
+
+.advanced-table-reg thead tr{
+    background-color: blue;
+    color:white;
+    text-align:center;
+    font-weight:bold;
+}
+.advanced-table-reg table, th, td {
+    border: 1px solid black;
+}
+
+.advanced-table-reg td{
+    text-align: center;
+    width: 40px;
+}
+
+.advanced-table-reg tfoot td{
+    background-color: blue;
+}
+
+.radar-regular {
+    width: 650px;
+    margin-top: 30px;
+}
+
+.box-reg{
+    margin-left: 11%;
+    margin-top:7%;
+    width: 400px;
+    height:430px;
+    background-color:rgb(32,32,32);
+    border-top: brown;
+    margin-bottom: 300px;
+}
+.advanced-regular-title{
+    margin-left:260px;
+    margin-right:auto;
+    width:50%;
+    padding: 30px;
+    text-align: center;
+}
+
+.all-data-reg-advanced{
+    display:flex;
+    margin-top: 10%;
+    margin-bottom: 5%;
+}
+
+.box1-reg{
+    margin-left: 3%;
+    margin-right: 1%;
+    margin-top:3%;
+    width: 400px;
+    height:430px;
+    background-color:rgb(32,32,32);
+    border-top: brown;
+    margin-bottom: 300px;
+}
+
+.home-links{
+    display:flex;
+    min-height: 100vh;
+    
+    margin-left:15%;
+    margin-right:10%;
+    margin-bottom: -500px;
+    
+    border-color: white;
+}
+
+#home-profile{
+    height:100vh;
+    width:40vw; 
+    text-align: center;
+    padding: 0 10px;
+}
+
+#home-profile h3 a{
+    margin-right: 3%;
+    position: relative;
+    text-decoration: none;
+    color: rgb(238, 228, 228);
+    font-size: 18px;
+    letter-spacing: 0.5px; 
+}
+
+#home-profile h3 a:after{
+    content:"";
+    position: absolute;
+    background-color: lightskyblue;
+    height: 3px;
+    width: 0;
+    left:0;
+    bottom:-20px;
+    transition:0.3s;
+}
+
+#home-profile h3 a:hover:after{
+    width: 100%;
+    
+}
+
+#home-career{
+    height:100vh;
+    width:40vw; 
+    margin-right: 25px;
+    text-align: center;
+    padding: 0 10px;
+}
+
+#home-career h3 a{
+    margin-right: 10%;
+    position: relative;
+    text-decoration: none;
+    color: rgb(238, 228, 228);
+    font-size: 18px;
+    letter-spacing: 0.5px; 
+}
+
+#home-career h3 a:after{
+    content:"";
+    position: absolute;
+    background-color: lightskyblue;
+    height: 3px;
+    width: 0;
+    left:0;
+    bottom:-20px;
+    transition:0.3s;
+}
+
+#home-career h3 a:hover:after{
+    width: 100%;
+}
+
+#home-adva{
+    height:100vh;
+    width:40vw; 
+    margin-right: 20px;
+    text-align: center;
+    padding: 0 10px;
+}
+
+#home-adva h3 a{
+    margin-right: 7%;
+    position: relative;
+    text-decoration: none;
+    color: rgb(238, 228, 228);
+    font-size: 18px;
+    letter-spacing: 0.5px; 
+}
+
+#home-adva h3 a:after{
+    content:"";
+    position: absolute;
+    background-color: lightskyblue;
+    height: 3px;
+    width: 0;
+    left:0;
+    bottom:-20px;
+    transition:0.3s;
+}
+
+#home-adva h3 a:hover:after{
+    width: 100%;
+    
+}
+
+#home-reg{
+    height:100vh;
+    width:50vw; 
+    margin-right: 60px;
+    text-align: center;
+    text-align: center;
+    padding: 0 10px;
+}
+
+#home-reg h3 a{
+    margin-right: 1%;
+    position: relative;
+    text-decoration: none;
+    color: rgb(238, 228, 228);
+    font-size: 18px;
+    letter-spacing: 0.5px; 
+}
+
+#home-reg h3 a:after{
+    content:"";
+    position: absolute;
+    background-color: lightskyblue;
+    height: 3px;
+    width: 0;
+    left:0;
+    bottom:-20px;
+    transition:0.3s;
+}
+
+#home-reg h3 a:hover:after{
+    width: 100%;
+    
+}
+
+#home-last{
+    height:100vh;
+    width:70vw; 
+    margin-right: 7%;
+    
+    align-items: center;
+    justify-content: space-around;
+    margin:auto;
+    padding: 0 10px;
+}
+
+#home-last h3 a{
+    margin-right: 7%;
+    position: relative;
+    text-decoration: none;
+    color: rgb(238, 228, 228);
+    font-size: 18px;
+    letter-spacing: 0.5px; 
+}
+
+#home-last h3 a:after{
+    content:'';
+    position: absolute;
+    background-color: lightskyblue;
+    height: 3px;
+    width: 0;
+    left:0;
+    bottom:-20px;
+    transition:0.3s;
+}
+#home-last h3 a:hover{
+    color: white;
+}
+
+#home-last h3 a:hover:after{
+    width: 100%;
+    
+}
+
+.home-links .home .current{
+    content:"";   
+    border-bottom: 3px solid lightskyblue;
+    
+}
+
+
+.full-width-background {
+    margin-left:  0px;
+    margin-right: 0px;
+    height: 65px;
+   }
+   
+.fwb-grey {
+    background-color: rgb(32, 32, 32);
+}
+
+.full-width-background1 {
+    margin-left:  0px;
+    margin-right: 0px;
+    margin-top: 40px;
+    height: 166px;
+   }
+   
+.fwb-dark-grey {
+    background-color: rgb(22, 22, 22);
+}
+
+.profile-all{
+    margin-top: 10%;
+    margin-left: 4.01%;
+    display: flex;
+    flex-direction: row;
+}
+
+
+.profile-all .profile-awards{
+    text-align: center;
+    margin-left: 3%;
+    margin-right: 2.5%;
+    width:20%;
+    display:flex;
+    flex-direction: column;
+
+}
+.profile-all .profile-awards .filler{
+    background-color: rgb(0, 0, 0);
+}
+.profile-all .profile-awards .inner-p-awards{
+    background-color: rgb(32, 32, 32);
+}
+
+.profile-all .personal-info{
+    background-position-x: 1000px;
+    text-align: center;
+    margin-right: 4%;
+    margin-left: 1%;
+    width: 35%;
+    display:flex;
+    flex-direction: column;
+}
+
+.profile-all .personal-info .inner-p-info{
+    background-color: rgb(32, 32, 32);
+}
+
+.profile-all .personal-info .fileler1{
+    background-color: black;
+}
+
+.profile-all .profile-honors { 
+    width: 20%;
+    text-align: center;
+    display:flex;
+    flex-direction: column;
+}
+
+.profile-all .profile-honors .honors-allnba{
+    background-color: rgb(32, 32, 32);
+    margin-bottom: 16%;
+}
+
+.profile-all .profile-honors .honors-am{
+    background-color: rgb(32, 32, 32);
+}
+
+.footer-profile{
+    margin-bottom: 5%;
+}
+.full-width-background1 .NBA-image{
+    display: flex;
+}
+
+.full-width-background1 .No-Image{
+    display: flex;
+}
+
+
+.full-width-background1 .NBA-image .final-image{
+    width:16%;
+    margin-left: 5%;
+    margin-bottom:9px;
+}
+
+.full-width-background1 .No-Image .no-image{
+    margin-top: 5.7px;
+    width:17%;
+    margin-left: 3%;
+    margin-bottom: 9px;
+}
+
+.full-width-background1 .bigwrap{
+    display:flex;
+}
+
+.full-width-background1 .wrap-playerhome{
+    margin-right: 65px;
+    margin-left: 65px;
+}
+
+.radar-regular #myChart{
+    margin-left: 70px;
+    background-color: rgb(32,32,32);
+    width: 50%;
+}
+
+.radar-and-note{
+    display: flex;
+    flex-direction: column;
+    margin-left: 4px;
+}

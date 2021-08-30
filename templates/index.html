@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset = "UTF-8">
+    <meta name = "viewport">
+    <title>{% block title %}Home{% endblock %}</title>
+    <link rel="https://cdnjs.cloudflare.com/ajax/libs/jquery/5.15.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href= "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel = 'stylesheet' href= {{url_for('static', filename='css/style.css')}}> 
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+    {{ JSGlue.include() }}
+</head>
+
+
+<body>
+    <div class = 'title-and-search'>
+    <div class='section-heading'><h2>TheGOATMetrics</h2></div>   
+    <div class="container" >
+        <div class="wrapper" >
+        <input type="text" name="search" id="search" placeholder="Enter NBA Player's Name" autocomplete="off">
+        <button><i class="fa fa-search" aria-hidden='true' ></i></button>
+        <div class="results">
+            <ul>
+            </ul>
+        </div>
+        </div>
+    
+   </div>
+   </div>
+    <script src = {{url_for('static', filename='js/NBA.js')}}></script>
+    <script>
+        
+        const searchInput = document.getElementById('search');
+        const searchWrapper = document.querySelector('.wrapper');
+        const resultsWrapper = document.querySelector('.results');
+
+        searchInput.addEventListener('keyup', () => {
+        let results = [];
+        let input = searchInput.value;
+        if (input.length > 3) {
+            results = names.filter((item) => {
+            return item.name.toLowerCase().includes(input.toLowerCase());
+            });
+    
+        }
+        renderResults(results);
+        });
+
+        function renderResults(results) {
+        if (!results.length) {
+            return searchWrapper.classList.remove('show');
+        }
+        
+        function replaceURL(item){
+            var x = item;
+            window.history.replaceState({}, x.title, "/" + '');
+            return 'player/profile/' + encodeURIComponent(x)
+        }
+
+        const content = results
+            .map((item) => {
+                return `<li><a style="text-decoration:none; display:block;" href = ${replaceURL(item.name)}>
+                <font color="white">${item.name}</font></a></li>`;
+            })
+            .join('');
+
+        searchWrapper.classList.add('show');
+        resultsWrapper.innerHTML = `<ul>${content}</ul>`;
+        }
+
+    </script>
+        {% block content %}  
+        {% endblock %}
+    </body>
+
+</html>
