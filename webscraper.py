@@ -1,41 +1,45 @@
 import requests, string
 from bs4 import BeautifulSoup, Comment
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, json, request
 from sportsreference.nba.roster import Player
 import re
 from nba_api.stats.static.players import find_players_by_full_name
 from nba_api.stats.endpoints.commonallplayers import CommonAllPlayers
+from nba_api.stats.endpoints.commonplayerinfo import CommonPlayerInfo
 from nba_api.stats.endpoints.playercareerstats import PlayerCareerStats
 from unidecode import unidecode
+import time
+import requests
+from urllib.request import Request, urlopen
+from selenium import webdriver
+
+custom_headers = {
+    'Host': 'stats.nba.com',
+    'Connection': 'keep-alive',
+    'Cache-Control': 'max-age=0',
+    'Upgrade-Insecure-Requests': '1',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Accept-Language': 'en-US,en;q=0.9',
+}
 
 
-webscraper = Blueprint("webscraper", __name__, static_folder ="static", template_folder="template")
-def find_every_player(dict, dictreal):
-    db = CommonAllPlayers().get_data_frames()[0]
-    dict = {}
-    for x in range(0, len(db)):
-        if int(db['TO_YEAR'][x]) > 2018:
-            str1 = str(db.at[x, 'DISPLAY_FIRST_LAST'])
-            str2 = str(db.at[x, 'TEAM_NAME'])
-            if(int(db.at[x, "FROM_YEAR"]) == 2021):
-                continue
-            elif(str2 != None and str2 != "" and str != "None"):
-                dictreal.append({'name' : str1 + " (" + str2 + ")"})
-            else:
-                dictreal.append({"name" : str1})
-        
-    for x in range(0, len(db)):
-        if int(db['TO_YEAR'][x]) <= 2018:
-            str3 = str(db.at[x, 'DISPLAY_FIRST_LAST'])
-            str4 = str(db.at[x, 'PERSON_ID'])
-            dictreal.append({'name' : str3 + " (" + str(db.at[x, "FROM_YEAR"]) + "-" + str(db.at[x, "TO_YEAR"]) + ")"})
-    
-    return dict
+# webscraper = Blueprint("webscraper", __name__, static_folder ="static", template_folder="template")
+# def find_every_player(dict, dopple):
+#     d = {}
+#     other = []
+#     # db = CommonAllPlayers().get_data_frames()[0]
+#     with open('nbanames.json', 'r') as file:
+#         nba_all = json.load(file)
+#     for x in nba_all:
+#         dict[nba_all[x]] = {PlayerCareerStats(player_id=nba_all[x]).get_data_frames()[0]}
+#     return dict
 
 
 def image_TF(api_id):
     URL = 'https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/' + api_id + '.png'
-    r = requests.get(URL)
+    r = requests.get(URL, headers={'User-Agent': 'Mozilla/5.0'})
     soup = BeautifulSoup(r.text, 'html.parser')
 
     if soup.find('code') == None:
@@ -43,21 +47,47 @@ def image_TF(api_id):
 
     return False
 
+def find_profile_info(id, ls):
+    URL = ("https://www.basketball-reference.com/players/")
+    first_initial = id[0]
+    r = requests.get(URL + first_initial + '/' + id + ".html")
+    soup = BeautifulSoup(r.text, "html.parser")
+
+    b = soup.find('div', itemtype = "https://schema.org/Person")
+    count = 0
+
+    for y in b.find_all('p'):
+        if (y.get_text().find("Position") != -1):
+            pos = y.get_text().split(' ▪')[0].replace("\n", "")
+            pos = pos.replace('Position:', "")
+            pos = pos.replace("   ", "")
+            ls['position'] = pos
+            
+            continue
+        elif (y.get_text().find("cm") != -1 and y.get_text().find("kg") != -1):
+            ls['htwt'] = y.get_text().replace('\xa0', " ")
+    
+    c = soup.find('a', href=True, class_='poptip default')
+    c = c.get_text().replace('\n', "")
+    c = c.replace('     ', '')
+    ls['number'] = c
+    return ls
 
 
-def find_player_name(name, sub, name_list):
+
+def find_player_name(name, sub, name_list, nl, d):
     URL = 'https://www.basketball-reference.com/search/search.fcgi?search='
+  
     r = requests.get(URL + name)
     soup = BeautifulSoup(r.text, 'html.parser')
 
-    p1 = soup.find('div', {'id':'players','class':'current'})
+    p1 = soup.find('div', id='players', class_='current')
     if p1 == None:
-        find_player_name_hard(name, name_list)
+        find_player_name_hard(name, name_list, nl)
         return None
-
     p = p1.find_all('div', {'class': 'search-item'})
     check = []
-    player_db = CommonAllPlayers().get_data_frames()[0]
+    # player_db = CommonPlayerInfo('203507').get_data_frames()[0]
     
     for name_filler in p:
         api_id = None
@@ -65,20 +95,7 @@ def find_player_name(name, sub, name_list):
         n = name_filler.find('a', href=True).get_text()
         id1 = name_filler.find('div',{'class':'search-item-url'})
         id = id1.get_text()[11:-5]
-        all_s = name_filler.find('span',{'class':'search-badge search-allstar'})
-        hof1 = name_filler.find('span',{'class':'search-badge search-hof'})
         current_status = name_filler.find('div',{'class':'search-item-team'})       
-
-        
-        if(all_s != None):
-            star = "All Star"
-        else:
-            star = "None"        
-
-        if(hof1 != None):
-            hof = "Hall of Fame"
-        else:
-            hof = "None"
 
         if current_status != None:
             status1 = current_status.get_text()
@@ -96,39 +113,29 @@ def find_player_name(name, sub, name_list):
             year = int(n[first+1:first+5])
             year = str(year -1)
             n1 = n1[:-3]
-            for find in range(0, len(player_db)):
-                
-                if(sub[0].isdigit() == False):
-                    if sub == "FINE" and player_db.at[find, 'DISPLAY_FIRST_LAST'] == unidecode(n1):
-                        api_full.append(str(player_db.at[find, 'PERSON_ID']))
-                        
-                        if api_full:
-                            api_id = api_full[0]         
-                        else:
-                            api_id = None
-                        name_list.update({id:[n, hof, star, status, api_id]})                        
 
-                    elif sub[0:-1] in status and player_db.at[find, 'DISPLAY_FIRST_LAST'] == unidecode(n1):
-                        api_full.append(str(player_db.at[find, 'PERSON_ID']))
-                        if api_full:
-                            api_id = api_full[0]         
-                        else:
-                            api_id = None
-                        name_list.update({id:[n, hof, star, status, api_id]})
+            
+            if (n1 + "^" + sub[0:4]) in d:
+                if(year == sub[0:4]):
+                    api_id = d[name + "^" + year]
+                    name_list.update({id:[n, None, None, status, api_id]})
+                    break
 
-                elif (int(year) == int(sub[0:4])+1 or year==int(sub[0:4])-1 or int(year)==int(sub[0:4])) and name == unidecode(n1) and player_db.at[find, 'DISPLAY_FIRST_LAST']==unidecode(n1):
-                        api_full.append(str(player_db.at[find, 'PERSON_ID']))
-                        
-                        if api_full:
-                            api_id = api_full[0]         
-                        else:
-                            api_id = None
-                        name_list.update({id:[n, hof, star, status, api_id]})
+            else:
+                if(sub[0].isdigit() == False and n1.lower() == name.lower()):
+                    api_id = nl[name]
+                    name_list.update({id:[n, None, None, status, api_id]})    
+                    break                    
 
-            # api_full = find_players_by_full_name(n1)
+                elif sub[0].isdigit() and n1.lower() == name.lower():
+                    api_id = nl[name]
+                    name_list.update({id:[n, None, None, status, api_id]})
+                    break
 
-
-
+                elif sub == "FINE" and (n1.lower() == name.lower() or n1.replace('.', "").lower() == name.lower()):
+                    api_id = nl[name]
+                    name_list.update({id:[n, None, None, status, api_id]})
+                    break
 
 
 def profile_info(id, list, personal, AllNBA, amateur):
@@ -281,71 +288,32 @@ def profile_info(id, list, personal, AllNBA, amateur):
     list.extend([champ_yr_list, MVP_yr_list, FMVP_yr_list, DPOY_yr_list, SMOY_yr_list,])
 
 
-def find_player_name_hard(name, name_list):
-    alphabet_string = string.ascii_lowercase
-    alphabet_list = list(alphabet_string)
-    name_lower = name.lower()
-    URL = "https://www.basketball-reference.com/players/"
-
-    player_db = CommonAllPlayers().get_data_frames()[0]
-    HOF = AllStar = name_f = href = c_status = realname= "None"
-    api_id = None
-    for letter in alphabet_list:
-        r = requests.get(URL + letter + '/')
-        soup = BeautifulSoup(r.text, 'html.parser')
-
-        row = soup.find_all('th',{'scope':'row','class':'left'})
-
-        for name_filler in row:
-            n = name_filler.get_text().lower()
-            if n.find(name_lower) == -1:
-                continue
-            else:
-                href1 = name_filler.find('a', href=True).get('href')
-                href = href1[11:-5]
-                name_f = name_filler.get_text()
-                one = name_f.find("*")
-                if(one != -1):
-                    name_f = name_f.replace(name_f[one:len(name_f)], "")
-
-    req = requests.get(URL + href[0] + '/' + href + '.html')
-    s = BeautifulSoup(req.text, 'html.parser')
-    bl = s.find('ul', id='bling')
-    if(bl != None):
-        for bling in bl.find_all('li'):
-            if bling.get_text().find('Hall of Fame') != -1:
-                HOF = "Hall of Fame"
-            elif bling.get_text().find('All Star') != -1:
-                AllStar = "All Star"
-    
-    status = s.find('div', id='all_per_game-playoffs_per_game')
-    if(status != None):
-        if(status.find('tr', id='per_game.2021') != None):
-            c_status = "Presently playing in the NBA"
-        else:
-            c_status = "Retired"
+def find_player_name_hard(name, name_list, nl):
+    n1 = name.split(" ")
+    if len(n1[1]) > 5:
+        if n1[1].find("-") != -1:
+            n1[1] = n1[1].replace("-", "")
+        if n1[0].find("-") != -1:
+            n1[0] = n1[0].replace("-", "")
+        if n1[1].find('.') != -1:
+            n1[0] = n1[1].replace(".", "")
+        if n1[0].find('.')!= -1:
+            n1[0] = n1[0].replace(".", "")
+        id = n1[1][0:5] + n1[0][0:2] + "01"
     else:
-        c_status = "Yet to play in the NBA"
+        if n1[1].find("-")!= -1:
+            n1[1] = n1[1].replace("-", "")
+        if n1[0].find("-")!= -1:
+            n1[0] = n1[0].replace("-", "")
+        if n1[1].find('.')!= -1:
+            n1[1] = n1[1].replace(".", "")
+        if n1[0].find('.')!= -1:
+            n1[0] = n1[0].replace(".", "")
+        id = n1[1] + n1[0][0:2] + "01"
 
-    if name_f != "None":
-        api_full = find_players_by_full_name(name_f)
-        if api_full:
-            api_id = str(api_full[0]['id'])
-            for vet in range(0, len(player_db)):
-                if(player_db.at[vet, 'DISPLAY_FIRST_LAST'] != name_f):
-                    continue
-                else:
-                    realname = name_f + " (" + player_db.at[vet, 'FROM_YEAR'] + "-" + player_db.at[vet, 'TO_YEAR'] +")"
-
-        elif len(api_full) == 0:
-            for rook in range(0, len(player_db)):
-                if(player_db.at[rook, 'DISPLAY_FIRST_LAST'] != name_f):
-                        continue
-                else:
-                    api_id = str(player_db.at[rook,'PERSON_ID'])
-                    realname = name_f + " (" + player_db.at[rook, 'FROM_YEAR'] + "-" + player_db.at[rook, 'TO_YEAR'] +")"
-
-    name_list.update({href:[realname, HOF, AllStar, c_status, api_id]})
+    id = id.lower()
+    api_id = nl[name]
+    name_list.update({id:[name, None, None, None, api_id]})
 
 
 def career_earnings_contract(id, dict):
@@ -388,12 +356,20 @@ def advanced_statistics_r(id, dict):
     r = requests.get(URL + first_initial + '/' + id + ".html")
     soup = BeautifulSoup(r.text, "html.parser")
 
-    dict.update({'PER':[], 'TS':[], 'ORB':[], 'DRB':[], 'TRB':[], 'AST':[], 'STL':[], 'BLK':[], 'TOV':[], 'USG':[], 'OWS':[], 'DWS':[], 'WS':[],
+    dict.update({'Season':[], 'Age':[],'Team':[],'GP':[],'PER':[], 'TS':[], 'ORB':[], 'DRB':[], 'TRB':[], 'AST':[], 'STL':[], 'BLK':[], 'TOV':[], 'USG':[], 'OWS':[], 'DWS':[], 'WS':[],
     'OBxPM':[], 'DBxPM':[], 'BxPM':[], 'VORP':[]})
     
     a = soup.find('div', id="all_advanced-playoffs_advanced")
     b = a.find('table',class_="stats_table sortable row_summable", id='advanced')
     for ad in b.find('tbody').find_all('tr'):
+        if ad.find('th', {'data-stat':'season'}):
+            dict['Season'].append(ad.find('th', {'data-stat':'season'}).get_text())
+        if ad.find('td', {'data-stat':'age'}):
+            dict['Age'].append(ad.find('td', {'data-stat':'age'}).get_text())
+        if ad.find('td', {'data-stat':'team_id'}):
+            dict['Team'].append(ad.find('td', {'data-stat':'team_id'}).get_text())
+        if ad.find('td', {'data-stat':'g'}):
+            dict['GP'].append(ad.find('td', {'data-stat':'g'}).get_text())
         if ad.find('td',{'data-stat':'per'}):
             dict['PER'].append(ad.find('td',{'data-stat':'per'}).get_text())
         if ad.find('td',{'data-stat':'ts_pct'}):
@@ -431,7 +407,8 @@ def advanced_statistics_r(id, dict):
     
     ad2 = b.find('tfoot')
     ad1 = ad2.find('tr')
-
+    if(ad1.find('td', {'data-stat':'g'})):
+        dict['GP'].append(ad1.find('td',{'data-stat':'g'}).get_text())
     if(ad1.find('td', {'data-stat':'per'})):
         dict['PER'].append(ad1.find('td',{'data-stat':'per'}).get_text())
     if ad1.find('td',{'data-stat':'ts_pct'}):
@@ -467,6 +444,232 @@ def advanced_statistics_r(id, dict):
     if ad1.find('td',{'data-stat':'vorp'}):
         dict['VORP'].append(ad1.find('td',{'data-stat':'vorp'}).get_text())
 
+    return None
+
+def find_reg_stats_scrape(id, dict, c1):
+    URL = ("https://www.basketball-reference.com/players/")
+    first_initial = id[0]
+    r = requests.get(URL + first_initial + '/' + id + ".html")
+    soup = BeautifulSoup(r.text, "html.parser")
+
+    a = soup.find('div', id="all_per_game-playoffs_per_game")
+    b = a.find('div', class_="table_container", id='div_per_game')
+
+    dict.update({'Season':[], 'Age':[], 'Team':[], 'GP':[], 'GS':[], 'MP':[], 'FGM':[], 'FGA':[], 'FG_PCT':[], 'FG3M':[], 'FG3A':[], 'FG3_PCT':[],
+    'FTM':[], 'FTA':[], 'FT_PCT':[], 'OREB':[], 'DREB':[], 'REB':[], 'AST':[], 'STL':[],'BLK':[], 'TOV':[], 'PF':[], 'PTS':[]})
+
+    c1.update({'GP':[], 'GS':[], 'MP':[], 'FGM':[], 'FGA':[], 'FG_PCT':[], 'FG3M':[], 'FG3A':[], 'FG3_PCT':[],
+    'FTM':[], 'FTA':[], 'FT_PCT':[], 'OREB':[], 'DREB':[], 'REB':[], 'AST':[], 'STL':[],'BLK':[], 'TOV':[], 'PF':[], 'PTS':[]})
+
+    for reg in b.find('tbody').find_all('tr'):
+        if reg.find('th', {'data-stat':'season'}):
+            dict['Season'].append(reg.find('th', {'data-stat':'season'}).get_text())
+        if reg.find('td', {'data-stat':'age'}):
+            dict['Age'].append(reg.find('td', {'data-stat':'age'}).get_text())
+        if reg.find('td', {'data-stat':'team_id'}):
+            dict['Team'].append(reg.find('td', {'data-stat':'team_id'}).get_text())
+        if reg.find('td', {'data-stat':'g'}):
+            dict['GP'].append(reg.find('td', {'data-stat':'g'}).get_text())
+        if reg.find('td', {'data-stat':'gs'}):
+            dict['GS'].append(reg.find('td', {'data-stat':'gs'}).get_text())
+        if reg.find('td', {'data-stat':'mp_per_g'}):
+            dict['MP'].append(reg.find('td', {'data-stat':'mp_per_g'}).get_text())
+        if reg.find('td', {'data-stat':'fg_per_g'}):
+            dict['FGM'].append(reg.find('td', {'data-stat':'fg_per_g'}).get_text())
+        if reg.find('td', {'data-stat':'fga_per_g'}):
+            dict['FGA'].append(reg.find('td', {'data-stat':'fga_per_g'}).get_text())
+        if reg.find('td', {'data-stat':'fg_pct'}):
+            dict['FG_PCT'].append(reg.find('td', {'data-stat':'fg_pct'}).get_text())
+        if reg.find('td', {'data-stat':'fg3_per_g'}):
+            dict['FG3M'].append(reg.find('td', {'data-stat':'fg3_per_g'}).get_text())
+        if reg.find('td', {'data-stat':'fg3a_per_g'}):
+            dict['FG3A'].append(reg.find('td', {'data-stat':'fg3a_per_g'}).get_text())
+        if reg.find('td', {'data-stat':'fg3_pct'}):
+            dict['FG3_PCT'].append(reg.find('td', {'data-stat':'fg3_pct'}).get_text())
+        if reg.find('td', {'data-stat':'ft_per_g'}):
+            dict['FTM'].append(reg.find('td', {'data-stat':'ft_per_g'}).get_text())
+        if reg.find('td', {'data-stat':'fta_per_g'}):
+            dict['FTA'].append(reg.find('td', {'data-stat':'fta_per_g'}).get_text())
+        if reg.find('td', {'data-stat':'ft_pct'}):
+            dict['FT_PCT'].append(reg.find('td', {'data-stat':'ft_pct'}).get_text())
+        if reg.find('td', {'data-stat':'orb_per_g'}):
+            dict['OREB'].append(reg.find('td', {'data-stat':'orb_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'drb_per_g'}):
+            dict['DREB'].append(reg.find('td', {'data-stat':'drb_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'trb_per_g'}):
+            dict['REB'].append(reg.find('td', {'data-stat':'trb_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'ast_per_g'}):
+            dict['AST'].append(reg.find('td', {'data-stat':'ast_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'stl_per_g'}):
+            dict['STL'].append(reg.find('td', {'data-stat':'stl_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'blk_per_g'}):
+            dict['BLK'].append(reg.find('td', {'data-stat':'blk_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'tov_per_g'}):
+            dict['TOV'].append(reg.find('td', {'data-stat':'tov_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'pf_per_g'}):
+            dict['PF'].append(reg.find('td', {'data-stat':'pf_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'pts_per_g'}):
+            dict['PTS'].append(reg.find('td', {'data-stat':'pts_per_g'}).get_text()) 
+
+    reg2 = b.find('tfoot')
+    reg1 = reg2.find('tr')
+
+    if reg1.find('td', {'data-stat':'g'}):
+        c1['GP'].append(reg1.find('td', {'data-stat':'g'}).get_text())
+    if reg1.find('td', {'data-stat':'gs'}):
+        c1['GS'].append(reg1.find('td', {'data-stat':'gs'}).get_text())
+    if reg1.find('td', {'data-stat':'mp_per_g'}):
+        c1['MP'].append(reg1.find('td', {'data-stat':'mp_per_g'}).get_text())
+    if reg1.find('td', {'data-stat':'fg_per_g'}):
+        c1['FGM'].append(reg1.find('td', {'data-stat':'fg_per_g'}).get_text())
+    if reg1.find('td', {'data-stat':'fga_per_g'}):
+        c1['FGA'].append(reg1.find('td', {'data-stat':'fga_per_g'}).get_text())
+    if reg1.find('td', {'data-stat':'fg_pct'}):
+        c1['FG_PCT'].append(reg1.find('td', {'data-stat':'fg_pct'}).get_text())
+    if reg1.find('td', {'data-stat':'fg3_per_g'}):
+        c1['FG3M'].append(reg1.find('td', {'data-stat':'fg3_per_g'}).get_text())
+    if reg1.find('td', {'data-stat':'fg3a_per_g'}):
+        c1['FG3A'].append(reg1.find('td', {'data-stat':'fg3a_per_g'}).get_text())
+    if reg1.find('td', {'data-stat':'fg3_pct'}):
+        c1['FG3_PCT'].append(reg1.find('td', {'data-stat':'fg3_pct'}).get_text())
+    if reg1.find('td', {'data-stat':'ft_per_g'}):
+        c1['FTM'].append(reg1.find('td', {'data-stat':'ft_per_g'}).get_text())
+    if reg1.find('td', {'data-stat':'fta_per_g'}):
+        c1['FTA'].append(reg1.find('td', {'data-stat':'fta_per_g'}).get_text())
+    if reg1.find('td', {'data-stat':'ft_pct'}):
+        c1['FT_PCT'].append(reg1.find('td', {'data-stat':'ft_pct'}).get_text())
+    if reg1.find('td', {'data-stat':'orb_per_g'}):
+        c1['OREB'].append(reg1.find('td', {'data-stat':'orb_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'drb_per_g'}):
+        c1['DREB'].append(reg1.find('td', {'data-stat':'drb_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'trb_per_g'}):
+        c1['REB'].append(reg1.find('td', {'data-stat':'trb_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'ast_per_g'}):
+        c1['AST'].append(reg1.find('td', {'data-stat':'ast_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'stl_per_g'}):
+        c1['STL'].append(reg1.find('td', {'data-stat':'stl_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'blk_per_g'}):
+        c1['BLK'].append(reg1.find('td', {'data-stat':'blk_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'tov_per_g'}):
+        c1['TOV'].append(reg1.find('td', {'data-stat':'tov_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'pf_per_g'}):
+        c1['PF'].append(reg1.find('td', {'data-stat':'pf_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'pts_per_g'}):
+        c1['PTS'].append(reg1.find('td', {'data-stat':'pts_per_g'}).get_text())
+
+    return None
+
+def find_play_stats_scrape(id, dict, c1):
+    URL = ("https://www.basketball-reference.com/players/")
+    first_initial = id[0]
+    r = requests.get(URL + first_initial + '/' + id + ".html")
+    soup = BeautifulSoup(r.text, "html.parser")
+
+    a = soup.find('div', id="all_per_game-playoffs_per_game")
+    b = a.find('div', class_="table_container", id='div_playoffs_per_game')
+
+    dict.update({'Season':[], 'Age':[], 'Team':[], 'GP':[], 'GS':[], 'MP':[], 'FGM':[], 'FGA':[], 'FG_PCT':[], 'FG3M':[], 'FG3A':[], 'FG3_PCT':[],
+    'FTM':[], 'FTA':[], 'FT_PCT':[], 'OREB':[], 'DREB':[], 'REB':[], 'AST':[], 'STL':[],'BLK':[], 'TOV':[], 'PF':[], 'PTS':[]})
+
+    c1.update({'GP':[], 'GS':[], 'MP':[], 'FGM':[], 'FGA':[], 'FG_PCT':[], 'FG3M':[], 'FG3A':[], 'FG3_PCT':[],
+    'FTM':[], 'FTA':[], 'FT_PCT':[], 'OREB':[], 'DREB':[], 'REB':[], 'AST':[], 'STL':[],'BLK':[], 'TOV':[], 'PF':[], 'PTS':[]})
+
+    for reg in b.find('tbody').find_all('tr'):
+        if reg.find('th', {'data-stat':'season'}):
+            dict['Season'].append(reg.find('th', {'data-stat':'season'}).get_text())
+        if reg.find('td', {'data-stat':'age'}):
+            dict['Age'].append(reg.find('td', {'data-stat':'age'}).get_text())
+        if reg.find('td', {'data-stat':'team_id'}):
+            dict['Team'].append(reg.find('td', {'data-stat':'team_id'}).get_text())
+        if reg.find('td', {'data-stat':'g'}):
+            dict['GP'].append(reg.find('td', {'data-stat':'g'}).get_text())
+        if reg.find('td', {'data-stat':'gs'}):
+            dict['GS'].append(reg.find('td', {'data-stat':'gs'}).get_text())
+        if reg.find('td', {'data-stat':'mp_per_g'}):
+            dict['MP'].append(reg.find('td', {'data-stat':'mp_per_g'}).get_text())
+        if reg.find('td', {'data-stat':'fg_per_g'}):
+            dict['FGM'].append(reg.find('td', {'data-stat':'fg_per_g'}).get_text())
+        if reg.find('td', {'data-stat':'fga_per_g'}):
+            dict['FGA'].append(reg.find('td', {'data-stat':'fga_per_g'}).get_text())
+        if reg.find('td', {'data-stat':'fg_pct'}):
+            dict['FG_PCT'].append(reg.find('td', {'data-stat':'fg_pct'}).get_text())
+        if reg.find('td', {'data-stat':'fg3_per_g'}):
+            dict['FG3M'].append(reg.find('td', {'data-stat':'fg3_per_g'}).get_text())
+        if reg.find('td', {'data-stat':'fg3a_per_g'}):
+            dict['FG3A'].append(reg.find('td', {'data-stat':'fg3a_per_g'}).get_text())
+        if reg.find('td', {'data-stat':'fg3_pct'}):
+            dict['FG3_PCT'].append(reg.find('td', {'data-stat':'fg3_pct'}).get_text())
+        if reg.find('td', {'data-stat':'ft_per_g'}):
+            dict['FTM'].append(reg.find('td', {'data-stat':'ft_per_g'}).get_text())
+        if reg.find('td', {'data-stat':'fta_per_g'}):
+            dict['FTA'].append(reg.find('td', {'data-stat':'fta_per_g'}).get_text())
+        if reg.find('td', {'data-stat':'ft_pct'}):
+            dict['FT_PCT'].append(reg.find('td', {'data-stat':'ft_pct'}).get_text())
+        if reg.find('td', {'data-stat':'orb_per_g'}):
+            dict['OREB'].append(reg.find('td', {'data-stat':'orb_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'drb_per_g'}):
+            dict['DREB'].append(reg.find('td', {'data-stat':'drb_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'trb_per_g'}):
+            dict['REB'].append(reg.find('td', {'data-stat':'trb_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'ast_per_g'}):
+            dict['AST'].append(reg.find('td', {'data-stat':'ast_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'stl_per_g'}):
+            dict['STL'].append(reg.find('td', {'data-stat':'stl_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'blk_per_g'}):
+            dict['BLK'].append(reg.find('td', {'data-stat':'blk_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'tov_per_g'}):
+            dict['TOV'].append(reg.find('td', {'data-stat':'tov_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'pf_per_g'}):
+            dict['PF'].append(reg.find('td', {'data-stat':'pf_per_g'}).get_text()) 
+        if reg.find('td', {'data-stat':'pts_per_g'}):
+            dict['PTS'].append(reg.find('td', {'data-stat':'pts_per_g'}).get_text()) 
+
+    reg2 = b.find('tfoot')
+    reg1 = reg2.find('tr')
+
+    if reg1.find('td', {'data-stat':'g'}):
+        c1['GP'].append(reg1.find('td', {'data-stat':'g'}).get_text())
+    if reg1.find('td', {'data-stat':'gs'}):
+        c1['GS'].append(reg1.find('td', {'data-stat':'gs'}).get_text())
+    if reg1.find('td', {'data-stat':'mp_per_g'}):
+        c1['MP'].append(reg1.find('td', {'data-stat':'mp_per_g'}).get_text())
+    if reg1.find('td', {'data-stat':'fg_per_g'}):
+        c1['FGM'].append(reg1.find('td', {'data-stat':'fg_per_g'}).get_text())
+    if reg1.find('td', {'data-stat':'fga_per_g'}):
+        c1['FGA'].append(reg1.find('td', {'data-stat':'fga_per_g'}).get_text())
+    if reg1.find('td', {'data-stat':'fg_pct'}):
+        c1['FG_PCT'].append(reg1.find('td', {'data-stat':'fg_pct'}).get_text())
+    if reg1.find('td', {'data-stat':'fg3_per_g'}):
+        c1['FG3M'].append(reg1.find('td', {'data-stat':'fg3_per_g'}).get_text())
+    if reg1.find('td', {'data-stat':'fg3a_per_g'}):
+        c1['FG3A'].append(reg1.find('td', {'data-stat':'fg3a_per_g'}).get_text())
+    if reg1.find('td', {'data-stat':'fg3_pct'}):
+        c1['FG3_PCT'].append(reg1.find('td', {'data-stat':'fg3_pct'}).get_text())
+    if reg1.find('td', {'data-stat':'ft_per_g'}):
+        c1['FTM'].append(reg1.find('td', {'data-stat':'ft_per_g'}).get_text())
+    if reg1.find('td', {'data-stat':'fta_per_g'}):
+        c1['FTA'].append(reg1.find('td', {'data-stat':'fta_per_g'}).get_text())
+    if reg1.find('td', {'data-stat':'ft_pct'}):
+        c1['FT_PCT'].append(reg1.find('td', {'data-stat':'ft_pct'}).get_text())
+    if reg1.find('td', {'data-stat':'orb_per_g'}):
+        c1['OREB'].append(reg1.find('td', {'data-stat':'orb_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'drb_per_g'}):
+        c1['DREB'].append(reg1.find('td', {'data-stat':'drb_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'trb_per_g'}):
+        c1['REB'].append(reg1.find('td', {'data-stat':'trb_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'ast_per_g'}):
+        c1['AST'].append(reg1.find('td', {'data-stat':'ast_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'stl_per_g'}):
+        c1['STL'].append(reg1.find('td', {'data-stat':'stl_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'blk_per_g'}):
+        c1['BLK'].append(reg1.find('td', {'data-stat':'blk_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'tov_per_g'}):
+        c1['TOV'].append(reg1.find('td', {'data-stat':'tov_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'pf_per_g'}):
+        c1['PF'].append(reg1.find('td', {'data-stat':'pf_per_g'}).get_text()) 
+    if reg1.find('td', {'data-stat':'pts_per_g'}):
+        c1['PTS'].append(reg1.find('td', {'data-stat':'pts_per_g'}).get_text())
+        
     return None
 
 

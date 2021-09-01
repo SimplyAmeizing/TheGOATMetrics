@@ -55,130 +55,131 @@
         
         </div>
     </div>
-    {% if not pdf.empty %}
+
+    {% if dict['Season'] %}
         <link rel = 'stylesheet' href= {{url_for('static', filename='css/style.css')}}>
-        <div class = 'overview-playoffs'>
-            <div class = 'col1-play'>
+        <div class = 'overview-reg-season'>
+            <div class = 'col1-reg'>
                 <span>
                     <strong>OVERVIEW</strong>
                 </span>
-                    {% if pdf_total.loc[0].at["SEASON_ID"] == '2020-21' or pdf_total.loc[0].at["SEASON_ID"] == '2021-22' %}
-                        <p><strong>{{pdf_total.loc[0].at['SEASON_ID']}}</strong></p>
+                    {% if dict["Season"][-1] == '2020-21' or dict["Season"][-1] == '2021-22' %}
+                        <p><strong>{{dict['Season'][-1]}}</strong></p>
                         <p><strong>Career</strong></p>
                     {% else%}
                         <p><strong>Career</strong></p>
                     {% endif %}
             </div>
         
-            <div class = 'col2-play'>
+            <div class = 'col2-reg'>
                 <div>
                     <span>
                         <strong>GP</strong>
                     </span>
-                    {% if pdf_total.loc[0].at["SEASON_ID"] == '2020-21' or pdf_total.loc[0].at["SEASON_ID"] == '2021-22' %}
-                        <p>{{pdf_total.at[0,'GP']}}</p>
-                        <p>{{pdf_total.at[1,'GP']}}</p>
+                    {% if dict["Season"][-1] == '2020-21' or dict["Season"][-1] == '2021-22' %}
+                        <p>{{dict['GP'][-1]}}</p>
+                        <p>{{career['GP'][0]}}</p>
                     {% else %}
-                        <p>{{pdf_total.at[1,'GP']}}</p>
+                        <p>{{career['GP'][0]}}</p>
                     {% endif %}
                     
                 </div>
             </div>
 
-            <div class = 'col3-play'>
+            <div class = 'col3-reg'>
                 <div>
                     <span>
                         <strong>GS</strong>
                     </span>
-                    {% if pdf_total.loc[0].at["SEASON_ID"] == '2020-21' or pdf_total.loc[0].at["SEASON_ID"] == '2021-22' %}
-                        <p>{{pdf_total.at[0,'GS']}}</p>
-                        <p>{{pdf_total.at[1,'GS']}}</p>
+                    {% if dict["Season"][-1] == '2020-21' or dict["Season"][-1] == '2021-22' %}
+                        <p>{{dict['GS'][-1]}}</p>
+                        <p>{{career['GP'][0]}}</p>
                     {% else %}
-                        <p>{{pdf_total.at[1,'GS']}}</p>
+                        <p>{{career['GP'][0]}}</p>
                     {% endif %}
                 </div>
             </div>
 
-            <div class = 'col4-play'>
+            <div class = 'col4-reg'>
                 <div>
                     <span>
                         <strong>PTS</strong>
                     </span>
-                    {% if pdf_total.loc[0].at["SEASON_ID"] == '2020-21' or pdf_total.loc[0].at["SEASON_ID"] == '2021-22' %}
-                        <p>{{pdf_total.at[0,'PTS']}}</p>
-                        <p>{{pdf_total.at[1,'PTS']}}</p>
+                    {% if dict["Season"][-1] == '2020-21' or dict["Season"][-1] == '2021-22'%}
+                        <p><b>{{dict['PTS'][-1]}}</b></p>
+                        <p><b>{{career['PTS'][0]}}</b></p>
                     {% else %}
-                        <p>{{pdf_total.at[1,'PTS']}}</p>
+                        <p>{{career['PTS'][0]}}</p>
                     {% endif %}
                 </div>
             </div>
 
-            <div class = 'col5-play'>
+            <div class = 'col5-reg'>
                 <div>
                     <span>
                         <strong>TRB</strong>
                     </span>
-                    {% if pdf_total.loc[0].at["SEASON_ID"] == '2020-21' or pdf_total.loc[0].at["SEASON_ID"] == '2021-22' %}
-                        <p>{{pdf_total.at[0,'REB']}}</p>
-                        <p>{{pdf_total.at[1,'REB']}}</p>
+                    {% if dict["Season"][-1] == '2020-21' or dict["Season"][-1] == '2021-22' %}
+                        <p>{{dict['REB'][-1]}}</p>
+                        <p>{{career['REB'][0]}}</p>
                     {% else %}
-                        <p>{{pdf_total.at[1,'REB']}}</p>
+                        <p>{{career['REB'][0]}}</p>
                     {% endif %}
                 </div>
             </div>
 
-            <div class = 'col6-play'>
+            <div class = 'col6-reg'>
                 <div>
                     <span>
                         <strong>AST</strong>
                     </span>
-                    {% if pdf_total.loc[0].at["SEASON_ID"] == '2020-21' or pdf_total.loc[0].at["SEASON_ID"] == '2021-22' %}
-                        <p>{{pdf_total.at[0,'AST']}}</p>
-                        <p>{{pdf_total.at[1,'AST']}}</p>
+                    {% if dict["Season"][-1] == '2020-21' or dict["Season"][-1] == '2021-22' %}
+                        <p>{{dict['AST'][-1]}}</p>
+                        <p>{{career['AST'][0]}}</p>
                     {% else %}
-                        <p>{{pdf_total.at[1,'AST']}}</p>
+                        <p>{{career['AST'][0]}}</p>
                     {% endif %}
                 </div>
             </div> 
 
-            <div class = 'col7-play'>
+            <div class = 'col7-reg'>
                 <div>
                     <span>
                         <strong>FG%</strong>
                     </span>
-                    {% if pdf_total.loc[0].at["SEASON_ID"] == '2020-21' or pdf_total.loc[0].at["SEASON_ID"] == '2021-22' %}
-                        <p>{{pdf_total.at[0,'FG_PCT']}}</p>
-                        <p>{{pdf_total.at[1,'FG_PCT']}}</p>
+                    {% if dict["Season"][-1] == '2020-21' or dict["Season"][-1] == '2021-22' %}
+                        <p>{{dict['FG_PCT'][-1]}}</p>
+                        <p>{{career['FG_PCT'][0]}}</p>
                     {% else %}
-                        <p>{{pdf_total.at[1,'FG_PCT']}}</p>
+                        <p>{{career['FG_PCT'][0]}}</p>
                     {% endif %}
                 </div>
             </div>
 
-            <div class = 'col8-play'>
+            <div class = 'col8-reg'>
                 <div>
                     <span>
                         <strong>3P%</strong>
                     </span>
-                    {% if pdf_total.loc[0].at["SEASON_ID"] == '2020-21' or pdf_total.loc[0].at["SEASON_ID"] == '2021-22' %}
-                        <p>{{pdf_total.at[0,'FG3_PCT']}}</p>
-                        <p>{{pdf_total.at[1,'FG3_PCT']}}</p>
+                    {% if dict["Season"][-1] == '2020-21' or dict["Season"][-1] == '2021-22' %}
+                        <p>{{dict['FG3_PCT'][-1]}}</p>
+                        <p>{{career['FG3_PCT'][0]}}</p>
                     {% else %}
-                        <p>{{pdf_total.at[1,'FG3_PCT']}}</p>
+                        <p>{{career['FG3_PCT'][0]}}</p>
                     {% endif %}
                 </div>
             </div>
 
-            <div class = 'col9-play'>
+            <div class = 'col9-reg'>
                 <div>
                     <span>
                         <strong>FT%</strong>
                     </span>
-                    {% if pdf_total.loc[0].at["SEASON_ID"] == '2020-21' or pdf_total.loc[0].at["SEASON_ID"] == '2021-22' %}
-                        <p>{{pdf_total.at[0,'FT_PCT']}}</p>
-                        <p>{{pdf_total.at[1,'FT_PCT']}}</p>
+                    {% if dict["Season"][-1] == '2020-21' or dict["Season"][-1] == '2021-22' %}
+                        <p>{{dict['FT_PCT'][-1]}}</p>
+                        <p>{{career['FT_PCT'][0]}}</p>
                     {% else %}
-                        <p>{{pdf_total.at[1,'FT_PCT']}}</p>
+                        <p>{{career['FT_PCT'][0]}}</p>
                     {% endif %}
                 </div>
             </div>
@@ -215,70 +216,69 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for index, row in pdf.iterrows()%}
+                    {% for i in range(0, dict['Season'] | length)%}
                     <tr>
-                        <td>{{row['SEASON_ID']}}</td>
-                        <td>{{row['PLAYER_AGE']}}</td>
-                        <td>{{row['TEAM_ABBREVIATION']}}</td>
-                        <td>{{row['GP']}}</td>
-                        <td>{{row['GS']}}</td>
-                        <td>{{row['MIN']}}</td>
-                        <td>{{row['FGM']}}</td>
-                        <td>{{row['FGA']}}</td>
-                        <td>{{row['FG_PCT']}}</td>
-                        <td>{{row['FG3M']}}</td>
-                        <td>{{row['FG3A']}}</td>
-                        <td>{{row['FG3_PCT']}}</td>
-                        <td>{{row['FTM']}}</td>
-                        <td>{{row['FTA']}}</td>
-                        <td>{{row['FT_PCT']}}</td>
-                        <td>{{row['OREB']}}</td>
-                        <td>{{row['DREB']}}</td>
-                        <td>{{row['REB']}}</td>
-                        <td>{{row['AST']}}</td>
-                        <td>{{row['STL']}}</td>
-                        <td>{{row['BLK']}}</td>
-                        <td>{{row['TOV']}}</td>
-                        <td>{{row['PF']}}</td>
-                        <td>{{row['PTS']}}</td>
+                        <td>{{dict['Season'][i]}}</td>
+                        <td>{{dict['Age'][i]}}</td>
+                        <td>{{dict['Team'][i]}}</td>
+                        <td>{{dict['GP'][i]}}</td>
+                        <td>{{dict['GS'][i]}}</td>
+                        <td>{{dict['MP'][i]}}</td>
+                        <td>{{dict['FGM'][i]}}</td>
+                        <td>{{dict['FGA'][i]}}</td>
+                        <td>{{dict['FG_PCT'][i]}}</td>
+                        <td>{{dict['FG3M'][i]}}</td>
+                        <td>{{dict['FG3A'][i]}}</td>
+                        <td>{{dict['FG3_PCT'][i]}}</td>
+                        <td>{{dict['FTM'][i]}}</td>
+                        <td>{{dict['FTA'][i]}}</td>
+                        <td>{{dict['FT_PCT'][i]}}</td>
+                        <td>{{dict['OREB'][i]}}</td>
+                        <td>{{dict['DREB'][i]}}</td>
+                        <td>{{dict['REB'][i]}}</td>
+                        <td>{{dict['AST'][i]}}</td>
+                        <td>{{dict['STL'][i]}}</td>
+                        <td>{{dict['BLK'][i]}}</td>
+                        <td>{{dict['TOV'][i]}}</td>
+                        <td>{{dict['PF'][i]}}</td>
+                        <td>{{dict['PTS'][i]}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
                 <tfoot>
-                    {% for index, row in play_career.iterrows()%}
                     <tr>
                         <td>Career</td>
                         <td></td>
                         <td></td>
-                        <td>{{row['GP']}}</td>
-                        <td>{{row['GS']}}</td>
-                        <td>{{row['MIN']}}</td>
-                        <td>{{row['FGM']}}</td>
-                        <td>{{row['FGA']}}</td>
-                        <td>{{row['FG_PCT']}}</td>
-                        <td>{{row['FG3M']}}</td>
-                        <td>{{row['FG3A']}}</td>
-                        <td>{{row['FG3_PCT']}}</td>
-                        <td>{{row['FTM']}}</td>
-                        <td>{{row['FTA']}}</td>
-                        <td>{{row['FT_PCT']}}</td>
-                        <td>{{row['OREB']}}</td>
-                        <td>{{row['DREB']}}</td>
-                        <td>{{row['REB']}}</td>
-                        <td>{{row['AST']}}</td>
-                        <td>{{row['STL']}}</td>
-                        <td>{{row['BLK']}}</td>
-                        <td>{{row['TOV']}}</td>
-                        <td>{{row['PF']}}</td>
-                        <td>{{row['PTS']}}</td>    
+                        <td>{{career['GP'][0]}}</td>
+                        <td>{{career['GS'][0]}}</td>
+                        <td>{{career['MP'][0]}}</td>
+                        <td>{{career['FGM'][0]}}</td>
+                        <td>{{career['FGA'][0]}}</td>
+                        <td>{{career['FG_PCT'][0]}}</td>
+                        <td>{{career['FG3M'][0]}}</td>
+                        <td>{{career['FG3A'][0]}}</td>
+                        <td>{{career['FG3_PCT'][0]}}</td>
+                        <td>{{career['FTM'][0]}}</td>
+                        <td>{{career['FTA'][0]}}</td>
+                        <td>{{career['FT_PCT'][0]}}</td>
+                        <td>{{career['OREB'][0]}}</td>
+                        <td>{{career['DREB'][0]}}</td>
+                        <td>{{career['REB'][0]}}</td>
+                        <td>{{career['AST'][0]}}</td>
+                        <td>{{career['STL'][0]}}</td>
+                        <td>{{career['BLK'][0]}}</td>
+                        <td>{{career['TOV'][0]}}</td>
+                        <td>{{career['PF'][0]}}</td>
+                        <td>{{career['PTS'][0]}}</td>    
                     </tr>
-                    {% endfor %}    
+                     
                 </tfoot>
         </table>
         <br>
         <br>
     {% else %}
-        <h2><b>There were no NBA Playoff data/statistics on this player...</b></h2>
+        <h2><b>There were no NBA data/statistics on this player...</b></h2>
     {% endif %}
     
 {% endblock %}

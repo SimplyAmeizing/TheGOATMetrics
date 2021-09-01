@@ -19,27 +19,15 @@
     <div class = "bigwrap">
         <div class = 'wrap-playerhome'>
         <div id = 'name-playerhome'><p><u>{{name}}</u></p></div>
-        {% if pdb['TEAM_CITY'][0] %}    
-            <div id = "team"><p> Team: {{pdb['TEAM_CITY'][0]}} {{pdb['TEAM_NAME'][0]}}</p></div>
+        {% if pdb['position'] %}    
+            <div id = "team"><p> Position: {{pdb['position']}}</p></div>
         {% else%}
-            <div id = "team"><p>Team: ------</p></div>
+            <div id = "team"><p>Position: ------</p></div>
         {% endif %}
-        <div id = "Position"><p> Position: {{pdb['POSITION'][0]}}</p></div>
-        <div id = "HW"><p> HT/WT: {{pdb['HEIGHT'][0]}}" --- {{pdb['WEIGHT'][0]}} lbs</p></div>
+        <div id = "HW"><p> HT/WT: {{pdb['htwt']}}</p></div>
+        <div id = 'Number'><p>Number: {{pdb['number']}}</p></div> 
         </div>
-
-        <div class = "wrap-playerhome1">
         
-            {% if pdb['DRAFT_YEAR'][0] != "Undrafted" %}
-                <div id = "Draft"><p>Draft: {{pdb['DRAFT_YEAR'][0]}} -- Rd: {{pdb['DRAFT_ROUND'][0]}} -- Pick: {{pdb['DRAFT_NUMBER'][0]}}</p></div>
-            {% else %}
-                <div id = "Draft"><p>Draft: Undrafted</p></div>
-            {% endif%}
-            <div id = 'Country'><p>Country: {{pdb['COUNTRY'][0]}}</p></div> 
-            <div id = 'College'><p>College/HS: {{pdb['SCHOOL'][0]}}</p></div> 
-            <div id = 'Number'><p>Number: {{pdb['JERSEY'][0]}}</p></div> 
-
-        </div>
     </div>
     </div>
 </div>

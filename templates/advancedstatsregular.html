@@ -56,7 +56,7 @@
         </div>
     </div>
 
-    {% if not pdf_reg.empty %}
+    {% if dict['Season'] | length != 0 %}
         <link rel = 'stylesheet' href= {{url_for('static', filename='css/style.css')}}>
         <div class="all-data-reg-advanced">
         <table class="advanced-table-reg">
@@ -312,7 +312,7 @@
                 </tfoot>
         </table>
         
-        {% if pdf1[1]['GP'][0] > 100 %}
+        {% if dict['GP'][-1] != '0' %}
             <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.min.js"> 
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             <div class = "radar-and-note">
